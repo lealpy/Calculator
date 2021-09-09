@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonPoint.setOnClickListener {
+            if(str.isEmpty() || !str[str.lastIndex].equals('.'))
             str = "${str}."
             binding.textViewEnter.text = "$str"
         }
@@ -77,42 +78,40 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonDel.setOnClickListener {
-            str = str.substring(0,str.length-1)
-            binding.textViewEnter.text = "$str"
-            binding.textViewResult.text = ""
+            if(!str.isEmpty()) {
+                str = str.substring(0, str.length - 1)
+                binding.textViewEnter.text = "$str"
+                binding.textViewResult.text = ""
+            }
         }
 
         binding.buttonPlus.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд
-            if(str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {}
-            else {
+            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
+            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
                 str = "${str}+"
                 binding.textViewEnter.text = "$str"
             }
         }
 
         binding.buttonMinus.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд
-            if(str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {}
-            else {
+            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
+            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
                 str = "${str}-"
                 binding.textViewEnter.text = "$str"
             }
         }
 
         binding.buttonMultiply.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд
-            if(str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {}
-            else {
+            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
+            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
                 str = "${str}*"
                 binding.textViewEnter.text = "$str"
             }
         }
 
         binding.buttonDivide.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд
-            if(str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {}
-            else {
+            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
+            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
                 str = "${str}/"
                 binding.textViewEnter.text = "$str"
             }
@@ -120,17 +119,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonOpen.setOnClickListener {
             //Скобка должна открываться после арифметических знаков
-            if(str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {
+            if(str.isEmpty() || str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {
                 str = "${str}("
                 binding.textViewEnter.text = "$str"
-                Log.d("MyLog", "str[str.lastIndex]")
             }
         }
 
         binding.buttonClose.setOnClickListener {
-            // Скобка не может закрываться после арифметических знаков
-            if(str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {}
-            else {
+            // Скобка не может закрываться после арифметических знаков, не может открываться в начале строки
+            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
                 str = "${str})"
                 binding.textViewEnter.text = "$str"
             }

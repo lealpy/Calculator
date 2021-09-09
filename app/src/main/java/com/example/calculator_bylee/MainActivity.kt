@@ -9,76 +9,65 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     var str = ""
-    lateinit var binding : ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.button0.setOnClickListener {
-            str = "${str}0"
-            binding.textViewEnter.text = "$str"
+            fillField("0")
         }
 
         binding.button1.setOnClickListener {
-            str = "${str}1"
-            binding.textViewEnter.text = "$str"
+            fillField("1")
         }
 
         binding.button2.setOnClickListener {
-            str = "${str}2"
-            binding.textViewEnter.text = "$str"
+            fillField("2")
         }
 
         binding.button3.setOnClickListener {
-            str = "${str}3"
-            binding.textViewEnter.text = "$str"
+            fillField("3")
         }
 
         binding.button4.setOnClickListener {
-            str = "${str}4"
-            binding.textViewEnter.text = "$str"
+            fillField("4")
         }
 
         binding.button5.setOnClickListener {
-            str = "${str}5"
-            binding.textViewEnter.text = "$str"
+            fillField("5")
         }
 
         binding.button6.setOnClickListener {
-            str = "${str}6"
-            binding.textViewEnter.text = "$str"
+            fillField("6")
         }
 
         binding.button7.setOnClickListener {
-            str = "${str}7"
-            binding.textViewEnter.text = "$str"
+            fillField("7")
         }
 
         binding.button8.setOnClickListener {
-            str = "${str}8"
-            binding.textViewEnter.text = "$str"
+            fillField("8")
         }
 
         binding.button9.setOnClickListener {
-            str = "${str}9"
-            binding.textViewEnter.text = "$str"
+            fillField("9")
         }
 
         binding.buttonPoint.setOnClickListener {
-            if(str.isEmpty() || !str[str.lastIndex].equals('.'))
-            str = "${str}."
-            binding.textViewEnter.text = "$str"
+            if (str.isEmpty() || !str.contains('.')) {
+                fillField(".")
+            }
         }
 
         binding.buttonC.setOnClickListener {
-            str = ""
-            binding.textViewEnter.text = "$str"
+            fillField("", "")
             binding.textViewResult.text = ""
         }
 
         binding.buttonDel.setOnClickListener {
-            if(!str.isEmpty()) {
+            if (!str.isEmpty()) {
                 str = str.substring(0, str.length - 1)
                 binding.textViewEnter.text = "$str"
                 binding.textViewResult.text = ""
@@ -86,69 +75,72 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonPlus.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
-            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
-                str = "${str}+"
-                binding.textViewEnter.text = "$str"
-            }
+            isPreviousNumber("+")
         }
 
         binding.buttonMinus.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
-            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
-                str = "${str}-"
-                binding.textViewEnter.text = "$str"
-            }
+            isPreviousNumber("-")
         }
 
         binding.buttonMultiply.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
-            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
-                str = "${str}*"
-                binding.textViewEnter.text = "$str"
-            }
+            isPreviousNumber("*")
         }
 
         binding.buttonDivide.setOnClickListener {
-            //Не может быть записано два арифметических знака подряд, знак не может идти в начале строки
-            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
-                str = "${str}/"
-                binding.textViewEnter.text = "$str"
-            }
+            isPreviousNumber("/")
         }
 
         binding.buttonOpen.setOnClickListener {
-            //Скобка должна открываться после арифметических знаков
-            if(str.isEmpty() || str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {
-                str = "${str}("
-                binding.textViewEnter.text = "$str"
-            }
+            isPreviousSign("(")
         }
 
         binding.buttonClose.setOnClickListener {
-            // Скобка не может закрываться после арифметических знаков, не может открываться в начале строки
-            if(!str.isEmpty() && (!str[str.lastIndex].equals('+') || !str[str.lastIndex].equals('-') || !str[str.lastIndex].equals('*') || !str[str.lastIndex].equals('/'))) {
-                str = "${str})"
-                binding.textViewEnter.text = "$str"
+            if (str.contains('(') && !str[str.lastIndex].equals('(')) {
+                isPreviousNumber(")")
             }
         }
 
         binding.buttonEquals.setOnClickListener {
             try {
-                val ex = ExpressionBuilder(str).build()
-                var result = ex.evaluate().toString()
-                //Удалим ".0", если результат - целое число
-                if(result[result.lastIndex].equals('0')) {
-                    result = result.substring(0,result.length-2)
-                    binding.textViewResult.text = "$result"
-                } else {
-                    binding.textViewResult.text = "$result"
-                }
-            } catch (e:Exception) {
-                Log.d("Ошибка", "сообщение: ${e.message}")
+                var result = ExpressionBuilder(str).build().evaluate().toString()
+                integerNotation(result)
+            } catch (e: Exception) {
+                Log.d("ErrLog", "Error: ${e.message}")
+                binding.textViewResult.text = ""
             }
         }
 
+    }
+
+    fun fillField(addSymbol: String, existStr: String = str) {
+        str = "${existStr}${addSymbol}"
+        binding.textViewEnter.text = "$str"
+    }
+
+    fun isPreviousNumber(addSymbol: String) {
+        if (!str.isEmpty() && !str[str.lastIndex].equals('+') && !str[str.lastIndex].equals('-') && !str[str.lastIndex].equals(
+                '*') && !str[str.lastIndex].equals('/')
+        ) {
+            fillField(addSymbol)
+        }
+    }
+
+    fun isPreviousSign(addSymbol: String) {
+        if (str.isEmpty() || str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals(
+                '*') || str[str.lastIndex].equals('/')
+        ) {
+            fillField(addSymbol)
+        }
+    }
+
+    fun integerNotation(number : String) {
+        if(number[number.lastIndex].equals('0'))
+        {
+            val intNumber = number.substring(0, number.length - 2)
+            binding.textViewResult.text = "$intNumber"
+        } else {
+            binding.textViewResult.text = "$number"
+        }
     }
 
 }

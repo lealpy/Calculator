@@ -9,140 +9,154 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     var str = ""
+    var result = ""
     lateinit var binding: ActivityMainBinding
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("savedStr", str)
+        outState.putString("savedResult", result)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val savedStr = savedInstanceState.getString("savedStr","")
+        val savedResult = savedInstanceState.getString("savedResult", "")
+        str = savedStr
+        result = savedResult
+        fillField(addSymbol = "")
+        resultPrint(result)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.button0.setOnClickListener {
-            fillField("0")
+            fillField(addSymbol = "0", existResult = "")
         }
 
         binding.button1.setOnClickListener {
-            fillField("1")
+            fillField(addSymbol = "1", existResult = "")
         }
 
         binding.button2.setOnClickListener {
-            fillField("2")
+            fillField(addSymbol = "2", existResult = "")
         }
 
         binding.button3.setOnClickListener {
-            fillField("3")
+            fillField(addSymbol = "3", existResult = "")
         }
 
         binding.button4.setOnClickListener {
-            fillField("4")
+            fillField(addSymbol = "4", existResult = "")
         }
 
         binding.button5.setOnClickListener {
-            fillField("5")
+            fillField(addSymbol = "5", existResult = "")
         }
 
         binding.button6.setOnClickListener {
-            fillField("6")
+            fillField(addSymbol = "6", existResult = "")
         }
 
         binding.button7.setOnClickListener {
-            fillField("7")
+            fillField(addSymbol = "7", existResult = "")
         }
 
         binding.button8.setOnClickListener {
-            fillField("8")
+            fillField(addSymbol = "8", existResult = "")
         }
 
         binding.button9.setOnClickListener {
-            fillField("9")
+            fillField(addSymbol = "9", existResult = "")
         }
 
         binding.buttonPoint.setOnClickListener {
-            if (str.isEmpty() || !str.contains('.')) {
-                fillField(".")
-            }
+            fillField(addSymbol = ".", existResult = "")
         }
 
         binding.buttonC.setOnClickListener {
-            fillField("", "")
-            binding.textViewResult.text = ""
+            fillField(addSymbol = "", existStr = "", existResult = "")
         }
 
         binding.buttonDel.setOnClickListener {
             if (!str.isEmpty()) {
                 str = str.substring(0, str.length - 1)
-                binding.textViewEnter.text = "$str"
-                binding.textViewResult.text = ""
+                fillField(addSymbol = "", existResult = "")
             }
         }
 
         binding.buttonPlus.setOnClickListener {
-            isPreviousNumber("+")
+            isPreviousNumber(addSymbol = "+")
         }
 
         binding.buttonMinus.setOnClickListener {
-            isPreviousNumber("-")
+            isPreviousNumber(addSymbol = "-")
         }
 
         binding.buttonMultiply.setOnClickListener {
-            isPreviousNumber("*")
+            isPreviousNumber(addSymbol = "*")
         }
 
         binding.buttonDivide.setOnClickListener {
-            isPreviousNumber("/")
+            isPreviousNumber(addSymbol = "/")
         }
 
         binding.buttonOpen.setOnClickListener {
-            isPreviousSign("(")
+            isPreviousSign(addSymbol = "(")
         }
 
         binding.buttonClose.setOnClickListener {
             if (str.contains('(') && !str[str.lastIndex].equals('(')) {
-                isPreviousNumber(")")
+                isPreviousNumber(addSymbol = ")")
             }
         }
 
         binding.buttonEquals.setOnClickListener {
             try {
-                var result = ExpressionBuilder(str).build().evaluate().toString()
-                integerNotation(result)
+                result = ExpressionBuilder(str).build().evaluate().toString()
+                resultPrint(result)
             } catch (e: Exception) {
                 Log.d("ErrLog", "Error: ${e.message}")
-                binding.textViewResult.text = ""
+                fillField(existResult = "")
             }
         }
-
     }
 
-    fun fillField(addSymbol: String, existStr: String = str) {
+    fun fillField(addSymbol: String = "", existStr: String = str, existResult : String = result) {
         str = "${existStr}${addSymbol}"
-        binding.textViewEnter.text = "$str"
+        binding.textViewEnter.text = str
+        result = existResult
+        binding.textViewResult.text = result
     }
 
     fun isPreviousNumber(addSymbol: String) {
-        if (!str.isEmpty() && !str[str.lastIndex].equals('+') && !str[str.lastIndex].equals('-') && !str[str.lastIndex].equals(
-                '*') && !str[str.lastIndex].equals('/')
-        ) {
-            fillField(addSymbol)
+        if (!str.isEmpty() && !str[str.lastIndex].equals('+') && !str[str.lastIndex].equals('-') && !str[str.lastIndex].equals('*') && !str[str.lastIndex].equals('/')) {
+            fillField(addSymbol, existResult = "")
         }
     }
 
     fun isPreviousSign(addSymbol: String) {
-        if (str.isEmpty() || str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals(
-                '*') || str[str.lastIndex].equals('/')
-        ) {
-            fillField(addSymbol)
+        if (str.isEmpty() || str[str.lastIndex].equals('+') || str[str.lastIndex].equals('-') || str[str.lastIndex].equals('*') || str[str.lastIndex].equals('/')) {
+            fillField(addSymbol, existResult = "")
         }
     }
 
-    fun integerNotation(number : String) {
-        if(number[number.lastIndex].equals('0'))
-        {
-            val intNumber = number.substring(0, number.length - 2)
-            binding.textViewResult.text = "$intNumber"
+    fun resultPrint(number : String) {
+        var roundedNumber = ""
+
+        if(number.length > 16) roundedNumber = number.substring(0,15)
+        else roundedNumber = number
+
+        if (roundedNumber[roundedNumber.lastIndex].equals('0')) {
+            val intNumber = roundedNumber.substring(0, number.length - 2)
+            binding.textViewResult.text = intNumber
         } else {
-            binding.textViewResult.text = "$number"
+            binding.textViewResult.text = roundedNumber
         }
     }
-
 }
 
 

@@ -9,17 +9,17 @@ import java.lang.Exception
 import kotlin.math.pow
 
 class MainActivity : AppCompatActivity() {
-    var str = ""
-    var resultDouble = 0.0
-    var resultBoolean = false
+    private var str = ""
+    private var resultDouble = 0.0
+    private var resultBoolean = false
     lateinit var binding: ActivityMainBinding
 
     companion object {
         const val SAVED_STR = "savedStr"
         const val SAVED_RESULT_DOUBLE = "savedResultDouble"
         const val SAVED_RESULT_BOOLEAN = "savedResultBoolean"
-        const val MAX_LENGTH = 15
         const val LOG_NAME = "MyLog"
+        const val MAX_STR_LENGTH = 15
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,14 +165,14 @@ class MainActivity : AppCompatActivity() {
     private fun printResult(numberDouble: Double) {
         var numberString = numberDouble.toBigDecimal().toPlainString()
         when {
-            numberDouble / 10.0.pow(MAX_LENGTH) > 1 -> {
+            numberDouble / 10.0.pow(MAX_STR_LENGTH) > 1 -> {
                 numberString = getString(R.string.long_number)
             }
-            numberString.length > MAX_LENGTH && !numberString[MAX_LENGTH-1].equals('.') -> {
-                numberString = numberString.substring(0, MAX_LENGTH-1)
+            numberString.length > MAX_STR_LENGTH && !numberString[MAX_STR_LENGTH-1].equals('.') -> {
+                numberString = numberString.substring(0, MAX_STR_LENGTH)
             }
-            numberString.length > MAX_LENGTH && numberString[MAX_LENGTH-1].equals('.') -> {
-                numberString = numberString.substring(0, MAX_LENGTH-2)
+            numberString.length > MAX_STR_LENGTH && numberString[MAX_STR_LENGTH-1].equals('.') -> {
+                numberString = numberString.substring(0, MAX_STR_LENGTH-1)
             }
             numberString[numberString.lastIndex].equals('0') -> {
                 numberString = numberString.substring(0, numberString.length - 2)
